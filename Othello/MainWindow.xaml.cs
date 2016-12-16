@@ -23,6 +23,31 @@ namespace Othello
         public MainWindow()
         {
             InitializeComponent();
+
+            CheckerBoard.Rows = 8;
+            CheckerBoard.Columns = 8;
+
+            for (int i = 0; i < 8; i++)
+            {
+                for (int j = 0; j < 4; j++)
+                {
+                    Rectangle rectVert = new Rectangle();
+                    rectVert.Fill = Brushes.ForestGreen;
+                    Rectangle rectDark = new Rectangle();
+                    rectDark.Fill = Brushes.DarkGreen;
+                    if (i % 2 == 0)
+                    {
+                        CheckerBoard.Children.Add(rectDark);
+                        CheckerBoard.Children.Add(rectVert);
+                    }
+                    else
+                    {
+                        CheckerBoard.Children.Add(rectVert);
+                        CheckerBoard.Children.Add(rectDark);
+                    }
+                }
+
+            }
         }
     }
 }
