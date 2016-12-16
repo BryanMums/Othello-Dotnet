@@ -1,0 +1,14 @@
+C:\Users\Dom\Documents\Cours\NETC#\Code\Othello\Othello-Dotnet\Othello\bin\Debug\Othello.exe.config
+C:\Users\Dom\Documents\Cours\NETC#\Code\Othello\Othello-Dotnet\Othello\bin\Debug\Othello.exe
+C:\Users\Dom\Documents\Cours\NETC#\Code\Othello\Othello-Dotnet\Othello\bin\Debug\Othello.pdb
+C:\Users\Dom\Documents\Cours\NETC#\Code\Othello\Othello-Dotnet\Othello\obj\Debug\Othello.csprojResolveAssemblyReference.cache
+C:\Users\Dom\Documents\Cours\NETC#\Code\Othello\Othello-Dotnet\Othello\obj\Debug\MainWindow.g.cs
+C:\Users\Dom\Documents\Cours\NETC#\Code\Othello\Othello-Dotnet\Othello\obj\Debug\App.g.cs
+C:\Users\Dom\Documents\Cours\NETC#\Code\Othello\Othello-Dotnet\Othello\obj\Debug\Othello_MarkupCompile.cache
+C:\Users\Dom\Documents\Cours\NETC#\Code\Othello\Othello-Dotnet\Othello\obj\Debug\Othello_MarkupCompile.lref
+C:\Users\Dom\Documents\Cours\NETC#\Code\Othello\Othello-Dotnet\Othello\obj\Debug\MainWindow.baml
+C:\Users\Dom\Documents\Cours\NETC#\Code\Othello\Othello-Dotnet\Othello\obj\Debug\Othello.g.resources
+C:\Users\Dom\Documents\Cours\NETC#\Code\Othello\Othello-Dotnet\Othello\obj\Debug\Othello.Properties.Resources.resources
+C:\Users\Dom\Documents\Cours\NETC#\Code\Othello\Othello-Dotnet\Othello\obj\Debug\Othello.csproj.GenerateResource.Cache
+C:\Users\Dom\Documents\Cours\NETC#\Code\Othello\Othello-Dotnet\Othello\obj\Debug\Othello.exe
+C:\Users\Dom\Documents\Cours\NETC#\Code\Othello\Othello-Dotnet\Othello\obj\Debug\Othello.pdb
