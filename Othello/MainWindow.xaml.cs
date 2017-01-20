@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -12,6 +13,8 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using Newtonsoft.Json;
+using System.IO;
 
 namespace Othello
 {
@@ -23,47 +26,22 @@ namespace Othello
         public MainWindow()
         {
             InitializeComponent();
-            Console.WriteLine("Bonjour : "+(char) 97);
+
+            /*************************************
+             * Création du gameboard 
+             * **********************************/
 
             Gameboard gb = new Gameboard();
+            //StateGame stateGame = new StateGame(gb.getBoard(), 0, 1, true);
+            //stateGame.saveInFile("C:/tmp/save.txt");
 
-            gb.drawBoard();
-
-            if (gb.isPlayable(3, 2, true))
-            {
-                Console.WriteLine("OUIOUI");
-            }
-
-            // Test des endroits jouables par 0 au début
-            for(int i = 0; i < 8; i++)
-            {
-                for(int j = 0; j < 8; j++)
-                {
-                    if (gb.isPlayable(i, j, false))
-                    {
-                        Console.WriteLine("("+i+", "+j+")");
-                    }
-                }
-            }
-
-            // Les 2 permettent de tester l'ajout en colonne dans les 2 sens.
-            //gb.playMove(3, 2, true);
-            //gb.playMove(4, 5, true);
-
-            // Les 2 permettent de tester l'ajout en ligne dans les 2 sens.
-            //gb.playMove(2, 3, true);
-            //gb.playMove(5, 4, true);
-
-            //Les 2 permettent de tester l'ajout en colonne dans les 2 sens.
-            //gb.playMove(5, 2, true);
-            //gb.playMove(2, 5, true);
-            //gb.playMove(5, 5, false);
-            //gb.playMove(2, 2, false);
-
-            gb.drawBoard();
-
+            System.Diagnostics.Stopwatch stopWatch = new System.Diagnostics.Stopwatch();
+            bool hasPlayed = false;
             
 
+            /*************************************
+             * Création interface et affichage
+             * **********************************/
             CheckerBoard.Rows = 8;
             CheckerBoard.Columns = 8;
 
@@ -88,6 +66,63 @@ namespace Othello
                 }
 
             }
+
+            /*************************************
+             * Joueur actif = noir
+             * **********************************/
+            bool activePlayer = false;
+
+
+            /*************************************
+             * Boucle principale
+             * **********************************/
+            while (gb.nbPossibilities(activePlayer) + gb.nbPossibilities(!activePlayer) > 0)
+            {
+                Console.WriteLine("C'est le tour de : " + activePlayer);
+                gb.drawBoard();
+                /********_Start Timer_************/
+                stopWatch.Start();
+                if(!activePlayer)
+                    gb.playMove(5, 3, activePlayer);
+                if (activePlayer)
+                    gb.playMove(5, 4, activePlayer);
+                //while (hasPlayed == false) ;
+                Thread.Sleep(3000);
+                // Va passer ça quand il aura cliqué
+                hasPlayed = false;
+
+                /*********_Arrêt du temps_********/
+                stopWatch.Stop();
+                // Get the elapsed time as a TimeSpan value.
+                TimeSpan ts = stopWatch.Elapsed;
+
+                // Format and display the TimeSpan value.
+                string elapsedTime = String.Format("{0:00}:{1:00}:{2:00}.{3:00}",
+                    ts.Hours, ts.Minutes, ts.Seconds,
+                    ts.Milliseconds / 10);
+                Console.WriteLine("RunTime " + elapsedTime);
+
+                Console.WriteLine("Score blanc : " + gb.getScore(true));
+                Console.WriteLine("Score noir : " + gb.getScore(false));
+                activePlayer = !activePlayer;
+
+
+            }
+
+            // Test des endroits jouables par 0 au début
+            for (int i = 0; i < 8; i++)
+            {
+                for(int j = 0; j < 8; j++)
+                {
+                    if (gb.isPlayable(i, j, true))
+                    {
+                        Console.WriteLine("("+i+", "+j+")");
+                    }
+                }
+            }
+            gb.drawBoard();
+
+            
         }
     }
 }
