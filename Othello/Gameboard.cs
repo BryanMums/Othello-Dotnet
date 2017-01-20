@@ -214,5 +214,36 @@ namespace Othello
             }
             Console.ReadLine();
         }
+
+        public int nbPossibilities(bool player)
+        {
+            int nb = 0;
+            for(int i = 0; i < 8; i++)
+            {
+                for(int j = 0; j < 8; j++)
+                {
+                    if (isPlayable(i, j, player))
+                        nb++;
+                }
+            }
+            return nb;
+        }
+
+        public int getScore(bool player)
+        {
+            int score = 0;
+            int rowLength = board.GetLength(0);
+            int colLength = board.GetLength(1);
+
+            for (int i = 0; i < rowLength; i++)
+            {
+                for (int j = 0; j < colLength; j++)
+                {
+                    if(board[i, j].getState() == (player ? 0 : 1))
+                        score++;
+                }
+            }
+            return score;
+        }
     }
 }
