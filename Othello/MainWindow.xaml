@@ -6,7 +6,54 @@
         xmlns:local="clr-namespace:Othello"
         mc:Ignorable="d"
         Title="MainWindow" Height="350" Width="525">
-    <UniformGrid x:Name="CheckerBoard">
+    <UniformGrid>
+
+
+        <Grid x:Name="WindowBoard">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="2*"></ColumnDefinition>
+                <ColumnDefinition Width="8*"></ColumnDefinition>
+                <ColumnDefinition Width="2*"></ColumnDefinition>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="1*"></RowDefinition>
+                <RowDefinition Height="9*"></RowDefinition>
+            </Grid.RowDefinitions>
+
+
+            <Grid Grid.Column="1" Grid.Row="1" x:Name="BoardGrid" Background="GreenYellow">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+
+            </Grid>
+            
+
+
+        </Grid>
+
+
+
+
+
 
     </UniformGrid>
 </Window>

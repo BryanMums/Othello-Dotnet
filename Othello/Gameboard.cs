@@ -8,6 +8,8 @@ namespace Othello
         private int size;
         private int whiteScore, blackScore = 0;
 
+        
+
         public Gameboard(int size = 8)
         {
             this.size = size;
