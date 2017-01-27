@@ -178,11 +178,14 @@ namespace Othello
             }
             if (!activePlayer)
             {
-                StatusLabel.Content = "Au tour du joueur noir !";
+                //StatusLabel.Content = "Au tour du joueur noir !";
+                activePlayerImage.Source = new BitmapImage(new Uri(@"img/black.png", UriKind.Relative));
+                
             }
             else
             {
-                StatusLabel.Content = "Au tour du joueur blanc !";
+                //StatusLabel.Content = "Au tour du joueur blanc !";
+                activePlayerImage.Source = new BitmapImage(new Uri(@"img/white.png", UriKind.Relative));
             }
         }
 

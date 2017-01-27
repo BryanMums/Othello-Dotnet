@@ -7,7 +7,7 @@
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300">
     <Grid>
-        <Border BorderThickness="2" BorderBrush="Azure" x:Name="pawnBorder"></Border>
+        <Border BorderThickness="2" BorderBrush="Black" x:Name="pawnBorder"></Border>
         <Image Source="img/trans.png" x:Name="pawnImage" />
     </Grid>
 </UserControl>
