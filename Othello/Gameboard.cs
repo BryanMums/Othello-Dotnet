@@ -58,7 +58,7 @@ namespace Othello
             //Check first neighbour
             if (!(board[l, c].getState() == (isWhite ? 1 : 0)))
                 return false;
-            while ((board[l, c].getState() != (isWhite ? 0 : 1)))
+            while ((board[l, c].getState() == (isWhite ? 1 : 0)))
             {
                 c += directionY;
                 l += directionX;
@@ -94,8 +94,10 @@ namespace Othello
                     {
                         bool end = false; // Variable de fin.
                         int c = column + j; int l = line + i; // c & l sont les coordonnées du voisin.
+                        if (c < 0 || c > 7 || l < 0 || l > 7)
+                            continue;
                         // Tant qu'on a une valeur différente que la notre
-                        while ((board[l, c].getState() != (isWhite ? 0 : 1)))
+                        while ((board[l, c].getState() == (isWhite ? 1 : 0)))
                         {
                             c += j; l += i; //On va aller au prochain voisin dans la direction.
                             nb += 1; 

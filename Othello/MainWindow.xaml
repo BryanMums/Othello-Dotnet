@@ -21,7 +21,17 @@
             </Grid.RowDefinitions>
 
 
-            <Grid Grid.Column="1" Grid.Row="1" x:Name="BoardGrid" Background="GreenYellow">
+            <StackPanel Grid.Column="0" Grid.Row="0" Background="Black">
+                <Label FontSize="20" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="White">NOIR</Label>
+            </StackPanel>
+            <StackPanel Grid.Column="2" Grid.Row="0" Background="White">
+                <Label FontSize="20" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center">BLANC</Label>
+            </StackPanel>
+            <StackPanel Grid.Column="0" Grid.Row="1"/>
+            <StackPanel Grid.Column="1" Grid.Row="0" Background="LightGray">
+                <Label x:Name="StatusLabel" FontSize="20" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+            </StackPanel>
+            <Grid Grid.Column="1" Grid.Row="1" x:Name="BoardGrid">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*" />
                     <ColumnDefinition Width="*" />
@@ -31,7 +41,7 @@
                     <ColumnDefinition Width="*" />
                     <ColumnDefinition Width="*" />
                     <ColumnDefinition Width="*" />
-                
+
                 </Grid.ColumnDefinitions>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="*" />
@@ -43,11 +53,7 @@
                     <RowDefinition Height="*" />
                     <RowDefinition Height="*" />
                 </Grid.RowDefinitions>
-
             </Grid>
-            
-
-
         </Grid>
 
 
