@@ -280,5 +280,15 @@ namespace Othello
 
             }
         }
+
+        private void btnNew_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void btnClose_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
     }
 }
