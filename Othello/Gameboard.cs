@@ -8,20 +8,21 @@ namespace Othello
         private Case[,] board;
         private int size;
         private int whiteScore, blackScore = 0;
-        private Timer whiteTimer, blackTimer;
+        public int whiteTime, blackTime;
+
         public bool activePlayer = false;
-        
+
 
         public Gameboard(int size = 8)
         {
             this.size = size;
             board = new Case[this.size, this.size];
             // On va remplir notre board
-            for(int i = 0; i< this.size; i++)
+            for (int i = 0; i < this.size; i++)
             {
-                for(int j = 0; j < this.size; j++)
+                for (int j = 0; j < this.size; j++)
                 {
-                    board[i, j] = new Othello.Case((char) (97 + i), j);
+                    board[i, j] = new Othello.Case((char)(97 + i), j);
                 }
             }
             board[3, 3].setState(1);
@@ -29,24 +30,15 @@ namespace Othello
             board[3, 4].setState(0);
             board[4, 3].setState(0);
 
-            // Les timers
-            whiteTimer = new Timer(1000);
-            blackTimer = new Timer(1000);
 
-            whiteTimer.Elapsed += new ElapsedEventHandler(UpdatePlayerTime);
-            blackTimer.Elapsed += new ElapsedEventHandler(UpdatePlayerTime);
-
-            whiteTimer.Start();
-            blackTimer.Start();
         }
 
-        public static void UpdatePlayerTime(object source, ElapsedEventArgs e)
-        {       
+        /*public static void UpdatePlayerTime(object source, ElapsedEventArgs e)
+        {
             Console.Write("\r{0}", DateTime.Now);
+        }*/
 
-        }
-
-    public bool isPlayable(int column, int line, bool isWhite)
+        public bool isPlayable(int column, int line, bool isWhite)
         {
             // On vérifie déjà si la case est vide ou non
             if (board[line, column].getState() != -1)
@@ -55,9 +47,9 @@ namespace Othello
 
             for (int i = -1; i <= 1; i++)
             {
-                for(int j = -1; j <= 1; j++)
+                for (int j = -1; j <= 1; j++)
                 {
-                   if (checkThisDirection(column, line, i, j, isWhite))
+                    if (checkThisDirection(column, line, i, j, isWhite))
                         return true;
                 }
             }
@@ -81,12 +73,12 @@ namespace Othello
                 c += directionY;
                 l += directionX;
                 nb += 1;
-                if(c > 7 || l > 7 || c < 0 || l < 0)
+                if (c > 7 || l > 7 || c < 0 || l < 0)
                 {
                     return false;
                 }
             }
-            if(board[l, c].getState() == -1 || nb == 0)
+            if (board[l, c].getState() == -1 || nb == 0)
             {
                 return false;
             }
@@ -95,6 +87,8 @@ namespace Othello
 
         public bool playMove(int column, int line, bool isWhite)
         {
+
+
 
             Console.WriteLine("Point joué : (" + column + ", " + line + ")");
             // Est-ce que le coup peut être joué ? 
@@ -107,7 +101,7 @@ namespace Othello
                 for (int j = -1; j <= 1; j++)
                 {
                     int nb = 0;
-                    
+
                     // Si différent que la case où on est
                     if (!(i == 0 && j == 0))
                     {
@@ -119,7 +113,7 @@ namespace Othello
                         while ((board[l, c].getState() == (isWhite ? 1 : 0)))
                         {
                             c += j; l += i; //On va aller au prochain voisin dans la direction.
-                            nb += 1; 
+                            nb += 1;
 
                             // On test si le prochain voisin est en dehors du board.
                             if (c > 7 || l > 7 || c < 0 || l < 0)
@@ -133,7 +127,8 @@ namespace Othello
                         if (!end)
                         {
                             // On teste si sa valeur est vide ou qu'on n'a pas eu de voisin directement possible.
-                            if(board[l, c].getState() == -1 || nb == 0){
+                            if (board[l, c].getState() == -1 || nb == 0)
+                            {
                                 end = true;  // On arrête
                             }
                             if (!end)
@@ -143,7 +138,7 @@ namespace Othello
                                 int incrementX = (line < l ? 1 : -1);
                                 int incrementY = (column < c ? -1 : 1);
 
-                                if(line - l != 0 && column - c != 0) // Si on a une diagonale (Changement dans les lignes et colonnes)
+                                if (line - l != 0 && column - c != 0) // Si on a une diagonale (Changement dans les lignes et colonnes)
                                 {
                                     //diagonale
                                     Console.WriteLine("Diagonale");
@@ -157,12 +152,12 @@ namespace Othello
                                         incrementC = (column < c ? 1 : -1);
                                         indexC = column;
                                     }
-                                    else if(startIndex == l) // Si on part de l, on va partir de c dans l'indexC
+                                    else if (startIndex == l) // Si on part de l, on va partir de c dans l'indexC
                                     {
                                         incrementC = (column < c ? -1 : 1);
                                         indexC = c;
                                     }
-                                    for (int index = startIndex; index <= endIndex; index+=1, indexC+=incrementC)
+                                    for (int index = startIndex; index <= endIndex; index += 1, indexC += incrementC)
                                     {
                                         board[index, indexC].setState((isWhite ? 0 : 1));
                                     }
@@ -173,13 +168,13 @@ namespace Othello
                                     Console.WriteLine("Colonne");
                                     int startIndex = (line < l ? line : l);
                                     int endIndex = (line < l ? l : line);
-                                    for (int index = startIndex;  index <= endIndex ; index += 1)
+                                    for (int index = startIndex; index <= endIndex; index += 1)
                                     {
                                         board[index, column].setState((isWhite ? 0 : 1));
                                     }
-                                    
+
                                 }
-                                else if(column - c != 0 && line - l == 0) // Si on a une ligne, il y a qu'un changement dans les colonnes.
+                                else if (column - c != 0 && line - l == 0) // Si on a une ligne, il y a qu'un changement dans les colonnes.
                                 {
                                     //ligne
                                     Console.WriteLine("Ligne");
@@ -191,10 +186,27 @@ namespace Othello
                                     }
                                 }
                             }
-                            
+
                         }
                     }
-                        
+
+                }
+            }
+            // Mis à jour les scores.
+            whiteScore = 0;
+            blackScore = 0;
+            for (int i = 0; i < board.GetLength(0); i++)
+            {
+                for (int j = 0; j < board.GetLength(1); j++)
+                {
+                    if (board[i, j].getState() == 0)
+                    {
+                        whiteScore++;
+                    }
+                    else if (board[i, j].getState() == 1)
+                    {
+                        blackScore++;
+                    }
                 }
             }
             return true;
@@ -210,16 +222,6 @@ namespace Othello
             return whiteScore;
         }
 
-        public int getBlackScore()
-        {
-            return blackScore;
-        }
-
-        public Case[,] getBoard()
-        {
-            return this.board;
-        }
-
         public bool getActivePlayer()
         {
             return this.activePlayer;
@@ -229,6 +231,43 @@ namespace Othello
         {
             this.activePlayer = b;
         }
+
+        public int getBlackScore()
+        {
+            return blackScore;
+        }
+
+        public int getWhiteTime()
+        {
+            return this.whiteTime;
+        }
+
+        public void setWhiteTime(int t)
+        {
+            this.whiteTime = t;
+        }
+
+        public int getBlackTime()
+        {
+            return this.blackTime;
+        }
+
+        public void setBlackTime(int t)
+        {
+            this.blackTime =  t;
+        }
+
+        public Case[,] getBoard()
+        {
+            return this.board;
+        }
+
+        public void setBoard(Case[,] board)
+        {
+            this.board = board;
+        }
+
+
 
         public void drawBoard()
         {
@@ -249,9 +288,9 @@ namespace Othello
         public int nbPossibilities(bool player)
         {
             int nb = 0;
-            for(int i = 0; i < 8; i++)
+            for (int i = 0; i < 8; i++)
             {
-                for(int j = 0; j < 8; j++)
+                for (int j = 0; j < 8; j++)
                 {
                     if (isPlayable(i, j, player))
                         nb++;
@@ -270,7 +309,7 @@ namespace Othello
             {
                 for (int j = 0; j < colLength; j++)
                 {
-                    if(board[i, j].getState() == (player ? 0 : 1))
+                    if (board[i, j].getState() == (player ? 0 : 1))
                         score++;
                 }
             }
