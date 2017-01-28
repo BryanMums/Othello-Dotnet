@@ -141,13 +141,24 @@ namespace Othello
 
                 }
             }
+
+
+            // Mise à jour des scores
+            scoreLabelPlayer1.Content = this.gb.getBlackScore();
+            scoreLabelPlayer2.Content = this.gb.getWhiteScore();
+
+
+
             if (!activePlayer)
             {
-                StatusLabel.Content = "Au tour du joueur noir !";
+                //StatusLabel.Content = "Au tour du joueur noir !";
+                activePlayerImage.Source = new BitmapImage(new Uri(@"img/black.png", UriKind.Relative));
+                
             }
             else
             {
-                StatusLabel.Content = "Au tour du joueur blanc !";
+                //StatusLabel.Content = "Au tour du joueur blanc !";
+                activePlayerImage.Source = new BitmapImage(new Uri(@"img/white.png", UriKind.Relative));
             }
         }
 
@@ -245,5 +256,29 @@ namespace Othello
             }
         }
 
+        private void btnSave_Click(object sender, RoutedEventArgs e)
+        {
+            SaveFileDialog saveFileDialog = new SaveFileDialog();
+            if (saveFileDialog.ShowDialog() == true)
+            {
+                // Créer l'état du jeu
+                StateGame sg = new StateGame(gb.getBoard(), 0, 1, true);
+                File.WriteAllText(saveFileDialog.FileName, sg.getJson());
+            }
+        }
+
+        private void btnload_Click(object sender, RoutedEventArgs e)
+        {
+            OpenFileDialog openFileDialog = new OpenFileDialog();
+            if (openFileDialog.ShowDialog() == true)
+            {
+                String state = File.ReadAllText(openFileDialog.FileName);
+                StateGame st = JsonConvert.DeserializeObject<StateGame>(state);
+                gb.setBoard(st.getCaseBoard());
+                MAJ();
+                Console.WriteLine(state);
+
+            }
+        }
     }
 }
