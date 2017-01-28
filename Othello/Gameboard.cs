@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Timers;
 
 namespace Othello
 {
@@ -7,6 +8,7 @@ namespace Othello
         private Case[,] board;
         private int size;
         private int whiteScore, blackScore = 0;
+        private Timer whiteTimer, blackTimer;
 
         
 
@@ -26,9 +28,24 @@ namespace Othello
             board[4, 4].setState(1);
             board[3, 4].setState(0);
             board[4, 3].setState(0);
+
+            // Les timers
+            whiteTimer = new Timer(1000);
+            blackTimer = new Timer(1000);
+
+            whiteTimer.Elapsed += new ElapsedEventHandler(UpdatePlayerTime);
+            blackTimer.Elapsed += new ElapsedEventHandler(UpdatePlayerTime);
+
+            whiteTimer.Start();
+            blackTimer.Start();
         }
 
-        public bool isPlayable(int column, int line, bool isWhite)
+        public static void UpdatePlayerTime(object source, ElapsedEventArgs e)
+        {       
+            Console.Write("\r{0}", DateTime.Now);
+        }
+
+    public bool isPlayable(int column, int line, bool isWhite)
         {
             // On vérifie déjà si la case est vide ou non
             if (board[line, column].getState() != -1)
@@ -77,6 +94,7 @@ namespace Othello
 
         public bool playMove(int column, int line, bool isWhite)
         {
+
             Console.WriteLine("Point joué : (" + column + ", " + line + ")");
             // Est-ce que le coup peut être joué ? 
             if (!isPlayable(column, line, isWhite))
