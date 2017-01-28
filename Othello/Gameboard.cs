@@ -9,7 +9,7 @@ namespace Othello
         private int size;
         private int whiteScore, blackScore = 0;
         private Timer whiteTimer, blackTimer;
-
+        public bool activePlayer = false;
         
 
         public Gameboard(int size = 8)
@@ -36,13 +36,16 @@ namespace Othello
             whiteTimer.Elapsed += new ElapsedEventHandler(UpdatePlayerTime);
             blackTimer.Elapsed += new ElapsedEventHandler(UpdatePlayerTime);
 
-            whiteTimer.Start();
+            // On démarre le timer du premier joueur
             blackTimer.Start();
+            
         }
 
         public static void UpdatePlayerTime(object source, ElapsedEventArgs e)
         {       
             Console.Write("\r{0}", DateTime.Now);
+            
+
         }
 
     public bool isPlayable(int column, int line, bool isWhite)
@@ -219,7 +222,15 @@ namespace Othello
             return this.board;
         }
 
-        
+        public bool getActivePlayer()
+        {
+            return this.activePlayer;
+        }
+
+        public void setActivePlayer(bool b)
+        {
+            this.activePlayer = b;
+        }
 
         public void drawBoard()
         {
