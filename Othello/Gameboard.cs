@@ -36,15 +36,13 @@ namespace Othello
             whiteTimer.Elapsed += new ElapsedEventHandler(UpdatePlayerTime);
             blackTimer.Elapsed += new ElapsedEventHandler(UpdatePlayerTime);
 
-            // On démarre le timer du premier joueur
+            whiteTimer.Start();
             blackTimer.Start();
-            
         }
 
         public static void UpdatePlayerTime(object source, ElapsedEventArgs e)
         {       
             Console.Write("\r{0}", DateTime.Now);
-            
 
         }
 
