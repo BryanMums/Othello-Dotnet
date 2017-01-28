@@ -16,6 +16,8 @@ using System.Windows.Shapes;
 using Newtonsoft.Json;
 using System.IO;
 using Microsoft.Win32;
+using System.Timers;
+using System.Windows.Threading;
 
 namespace Othello
 {
@@ -26,46 +28,44 @@ namespace Othello
     {
 
         Gameboard gb;
-        bool activePlayer = false;
+        private DispatcherTimer updateTimer;
+
 
         public MainWindow()
         {
             InitializeComponent();
-            /*************************************
-             * Création du gameboard 
-             * **********************************/
-
-            //StateGame stateGame = new StateGame(gb.getBoard(), 0, 1, true);
-            //stateGame.saveInFile("C:/tmp/save.txt");
-
-            System.Diagnostics.Stopwatch stopWatch = new System.Diagnostics.Stopwatch();
-            bool hasPlayed = false;
-            
-
-            
-
-            /*************************************
-             * Création interface et affichage
-             * **********************************/
-
             this.gb = new Gameboard();
-
-            // Initialisation de la grille
             MAJ();
-            /*************************************
-             * Joueur actif = noir
-             * **********************************/
-            bool activePlayer = false;
+
+            updateTimer = new DispatcherTimer(DispatcherPriority.SystemIdle);
+            updateTimer.Tick += new EventHandler(OnUpdateTimerTick);
+            updateTimer.Interval = TimeSpan.FromMilliseconds(1000);
+            updateTimer.Start();
+
+        }
+
+        private void OnUpdateTimerTick(object sender, EventArgs e)
+        {
+            if (!this.gb.activePlayer)
+            {
+                this.gb.blackTime += 1;
+                timeLabelPlayer1.Content = this.gb.blackTime;
+            }else
+            {
+                this.gb.whiteTime += 1;
+                timeLabelPlayer2.Content = this.gb.whiteTime;
+            }
+
         }
 
         private void MouseLeftButtonUpCase(object sender, MouseButtonEventArgs e)
         {
             CaseUserControl control = (CaseUserControl) sender;
-            if(this.gb.playMove(control.Y, control.X, this.activePlayer))
+            if(this.gb.playMove(control.Y, control.X, gb.activePlayer))
             {
                 control.pawnImage.Source = new BitmapImage(new Uri(@"img/black.png", UriKind.Relative));
                 Console.WriteLine("MAJ");
-                this.activePlayer = !this.activePlayer;
+                gb.activePlayer = !gb.activePlayer;
                 MAJ();
                 checkVictoryOrSkippingTurn();
             }
@@ -74,11 +74,11 @@ namespace Othello
         private void MouseEnterCase(object sender, MouseEventArgs e)
         {
             CaseUserControl control = (CaseUserControl)sender;
-            if(this.gb.isPlayable(control.Y, control.X, this.activePlayer))
+            if(this.gb.isPlayable(control.Y, control.X, gb.activePlayer))
             {
-                if (this.activePlayer)
+                if (gb.activePlayer)
                     control.pawnImage.Source = new BitmapImage(new Uri(@"img/white.png", UriKind.Relative));
-                if (!this.activePlayer)
+                if (!gb.activePlayer)
                     control.pawnImage.Source = new BitmapImage(new Uri(@"img/black.png", UriKind.Relative));
             }
         }
@@ -88,11 +88,11 @@ namespace Othello
             CaseUserControl control = (CaseUserControl)sender;
             if(control.Empty == true)
             {
-                if (this.gb.isPlayable(control.Y, control.X, activePlayer))
+                if (this.gb.isPlayable(control.Y, control.X, gb.activePlayer))
                 {
-                    if (this.activePlayer)
+                    if (gb.activePlayer)
                         control.pawnImage.Source = new BitmapImage(new Uri(@"img/white_hover.png", UriKind.Relative));
-                    if (!this.activePlayer)
+                    if (!gb.activePlayer)
                         control.pawnImage.Source = new BitmapImage(new Uri(@"img/black_hover.png", UriKind.Relative));
                 }else
                 {
@@ -103,6 +103,14 @@ namespace Othello
 
         public void MAJ()
         {
+            Brush borderColor = Brushes.Gray;
+            if(this.gb.getBlackScore() > this.gb.getWhiteScore())
+            {
+                borderColor = Brushes.Black;
+            }else if(this.gb.getBlackScore() < this.gb.getWhiteScore())
+            {
+                borderColor = Brushes.White;
+            }
             // Initialisation de la grille
             for (int i = 0; i < 8; i++)
             {
@@ -117,6 +125,7 @@ namespace Othello
                     control.MouseEnter += MouseEnterCase;
 
                     control.pawnBorder.Background = (i % 2 == 0) ? (j % 2 == 0) ? Brushes.ForestGreen : Brushes.DarkGreen : (j % 2 == 0) ? Brushes.DarkGreen : Brushes.ForestGreen;
+                    control.pawnBorder.BorderBrush = borderColor;
 
                     Grid.SetColumn(control, i);
                     Grid.SetRow(control, j);
@@ -130,11 +139,11 @@ namespace Othello
                         control.pawnImage.Source = new BitmapImage(new Uri(@"img/black.png", UriKind.Relative));
                         control.Empty = false;
                     }
-                    if(this.gb.isPlayable(j, i, activePlayer))
+                    if(this.gb.isPlayable(j, i, gb.activePlayer))
                     {
-                        if (this.activePlayer)
+                        if (gb.activePlayer)
                             control.pawnImage.Source = new BitmapImage(new Uri(@"img/white_hover.png", UriKind.Relative));
-                        if (!this.activePlayer)
+                        if (!gb.activePlayer)
                             control.pawnImage.Source = new BitmapImage(new Uri(@"img/black_hover.png", UriKind.Relative));
                     }
                     BoardGrid.Children.Add(control);
@@ -149,7 +158,7 @@ namespace Othello
 
 
 
-            if (!activePlayer)
+            if (!gb.activePlayer)
             {
                 //StatusLabel.Content = "Au tour du joueur noir !";
                 activePlayerImage.Source = new BitmapImage(new Uri(@"img/black.png", UriKind.Relative));
@@ -165,8 +174,8 @@ namespace Othello
         //Ne fonctionne pas encore.
         public void checkVictoryOrSkippingTurn()
         {
-            Console.WriteLine("Moi : "+gb.nbPossibilities(this.activePlayer));
-            Console.WriteLine("Lui : "+gb.nbPossibilities(!this.activePlayer));
+            Console.WriteLine("Moi : "+gb.nbPossibilities(gb.activePlayer));
+            Console.WriteLine("Lui : "+gb.nbPossibilities(!gb.activePlayer));
             //Tester si le nombre de possibilités totals = 0
             // Si oui -> Fin du match.
             if(gb.nbPossibilities(true) + gb.nbPossibilities(false) == 0)
@@ -175,11 +184,11 @@ namespace Othello
             }
             //Tester si le nombre de possibilités du joueur = 0.
             //Si oui, on change de joueur.
-            else if(gb.nbPossibilities(this.activePlayer) == 0)
+            else if(gb.nbPossibilities(gb.activePlayer) == 0)
             {
-                MessageBoxResult result = MessageBox.Show("Le joueur " + (activePlayer ? "blanc" : "noir") + " ne peut pas jouer !", "Confirmation");
+                MessageBoxResult result = MessageBox.Show("Le joueur " + (gb.activePlayer ? "blanc" : "noir") + " ne peut pas jouer !", "Confirmation");
                 Console.WriteLine("NE PEUT PAS JOUER");
-                this.activePlayer = !this.activePlayer;
+                gb.activePlayer = !gb.activePlayer;
                 MAJ();
             }
         }
@@ -224,7 +233,7 @@ namespace Othello
             // Remettre à 0 les temps et scores
             // Remettre le joueur actif le joueur NOIR = false
             this.gb = new Gameboard();
-            activePlayer = false;
+            gb.activePlayer = false;
             MAJ();
         }
 
@@ -249,7 +258,7 @@ namespace Othello
                 // Mise à jour du board.
                 gb.setBoard(st.getCaseBoard());
                 // Mise à jour du joueur
-                this.activePlayer = st.ActivePlayer;
+                this.gb.activePlayer = st.ActivePlayer;
                 gb.majScores();
                 MAJ();
                 Console.WriteLine(state);

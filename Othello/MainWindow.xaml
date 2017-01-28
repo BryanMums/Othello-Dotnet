@@ -46,7 +46,7 @@
                             </StackPanel>
                             <StackPanel Orientation="Horizontal">
                                 <Label FontSize="15" FontWeight="Bold" Foreground="Black" Padding="10">Play time:</Label>
-                                <Label x:Name="timeLabelPlayer1" FontSize="15"></Label>
+                                <Label x:Name="timeLabelPlayer1" FontSize="15">0</Label>
                             </StackPanel>
                             <StackPanel Orientation="Horizontal">
                                 <Label FontSize="15" FontWeight="Bold" Foreground="Black" Padding="10">Score:</Label>
@@ -67,7 +67,7 @@
                             </StackPanel>
                             <StackPanel Orientation="Horizontal">
                                 <Label FontSize="15" FontWeight="Bold" Foreground="Black" Padding="10">Play time:</Label>
-                                <Label x:Name="timeLabelPlayer2" FontSize="15"></Label>
+                                <Label x:Name="timeLabelPlayer2" FontSize="15">0</Label>
                             </StackPanel>
                             <StackPanel Orientation="Horizontal">
                                 <Label FontSize="15" FontWeight="Bold" Foreground="Black" Padding="10">Score:</Label>
