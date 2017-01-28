@@ -77,10 +77,35 @@
                     </Border>
                 </Border>
 
+                <Border Padding="10">
+                    <Border BorderBrush="#FF1986D1" BorderThickness="1" VerticalAlignment="Top">
+                        <StackPanel>
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="5*"/>
+                                    <ColumnDefinition Width="5*"/>
+                                </Grid.ColumnDefinitions>
+
+                                <Button Grid.Column="0">Save Game</Button>
+                                <Button Grid.Column="1">Load Game</Button>
+                            </Grid>
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="5*"/>
+                                    <ColumnDefinition Width="5*"/>
+                                </Grid.ColumnDefinitions>
+
+                                <Button Grid.Column="0">New Game</Button>
+                                <Button Grid.Column="1">Quit Game</Button>
+                            </Grid>
+                        </StackPanel>
+
+                    </Border>
+                </Border>
+
 
             </StackPanel>
-            
-                      
+                                  
             
             <Grid Grid.Column="0" Grid.Row="0" x:Name="BoardGrid">
                 <Grid.ColumnDefinitions>
@@ -106,11 +131,6 @@
                 </Grid.RowDefinitions>
             </Grid>
         </Grid>
-
-
-
-
-
 
     </UniformGrid>
 </Window>
