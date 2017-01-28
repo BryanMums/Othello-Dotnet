@@ -28,6 +28,7 @@ namespace Othello
             board[4, 4].setState(1);
             board[3, 4].setState(0);
             board[4, 3].setState(0);
+            majScores();
 
             // Les timers
             whiteTimer = new Timer(1000);
@@ -196,25 +197,30 @@ namespace Othello
                         
                 }
             }
+            majScores();
+            return true;
+        }
+
+        public void majScores()
+        {
             // Mis à jour les scores.
             whiteScore = 0;
             blackScore = 0;
-            for(int i = 0; i < board.GetLength(0); i++)
+            for (int i = 0; i < board.GetLength(0); i++)
             {
-                for(int j = 0; j < board.GetLength(1); j++)
+                for (int j = 0; j < board.GetLength(1); j++)
                 {
-                    if(board[i,j].getState() == 0)
+                    if (board[i, j].getState() == 0)
                     {
                         whiteScore++;
-                    }else if(board[i,j].getState() == 1)
+                    }
+                    else if (board[i, j].getState() == 1)
                     {
                         blackScore++;
                     }
                 }
             }
-            return true;
         }
-
         public Tuple<char, int> getNextMove(int[,] game, int level, bool whiteTurn)
         {
             return new Tuple<char, int>('a', 1);
@@ -239,8 +245,6 @@ namespace Othello
         {
             this.board = board;
         }
-
-        
 
         public void drawBoard()
         {

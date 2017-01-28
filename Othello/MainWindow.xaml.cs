@@ -228,34 +228,6 @@ namespace Othello
             MAJ();
         }
 
-        // Permet de charger une sauvegarde d'une partie.
-        public void loadGame()
-        {
-            OpenFileDialog openFileDialog = new OpenFileDialog();
-            if (openFileDialog.ShowDialog() == true)
-            {
-                String state = File.ReadAllText(openFileDialog.FileName);
-                StateGame st = JsonConvert.DeserializeObject<StateGame>(state);
-                gb.setBoard(st.getCaseBoard());
-                MAJ();
-                Console.WriteLine(state);
-
-            }
-                
-        }
-
-        // Permet de sauvegarder l'état d'une partie
-        public void saveGame()
-        {
-            SaveFileDialog saveFileDialog = new SaveFileDialog();
-            if (saveFileDialog.ShowDialog() == true)
-            {
-                // Créer l'état du jeu
-                StateGame sg = new StateGame(gb.getBoard(), 0, 1, true);
-                File.WriteAllText(saveFileDialog.FileName, sg.getJson());
-            }
-        }
-
         private void btnSave_Click(object sender, RoutedEventArgs e)
         {
             SaveFileDialog saveFileDialog = new SaveFileDialog();
@@ -274,7 +246,11 @@ namespace Othello
             {
                 String state = File.ReadAllText(openFileDialog.FileName);
                 StateGame st = JsonConvert.DeserializeObject<StateGame>(state);
+                // Mise à jour du board.
                 gb.setBoard(st.getCaseBoard());
+                // Mise à jour du joueur
+                this.activePlayer = st.ActivePlayer;
+                gb.majScores();
                 MAJ();
                 Console.WriteLine(state);
 
@@ -283,12 +259,12 @@ namespace Othello
 
         private void btnNew_Click(object sender, RoutedEventArgs e)
         {
-
+            startNewGame();
         }
 
         private void btnClose_Click(object sender, RoutedEventArgs e)
         {
-
+            Application.Current.Shutdown();
         }
     }
 }
