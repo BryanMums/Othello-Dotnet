@@ -176,6 +176,14 @@ namespace Othello
 
                 }
             }
+
+
+            // Mise à jour des scores
+            scoreLabelPlayer1.Content = this.gb.getBlackScore();
+            scoreLabelPlayer2.Content = this.gb.getWhiteScore();
+
+
+
             if (!activePlayer)
             {
                 //StatusLabel.Content = "Au tour du joueur noir !";

@@ -50,7 +50,7 @@
                             </StackPanel>
                             <StackPanel Orientation="Horizontal">
                                 <Label FontSize="15" FontWeight="Bold" Foreground="Black" Padding="10">Score:</Label>
-                                <Label x:Name="scoreLabelPlayer1" FontSize="15"></Label>
+                                <Label x:Name="scoreLabelPlayer1" FontSize="15">0</Label>
                             </StackPanel>
                         </StackPanel>
                     </Border>
@@ -71,7 +71,7 @@
                             </StackPanel>
                             <StackPanel Orientation="Horizontal">
                                 <Label FontSize="15" FontWeight="Bold" Foreground="Black" Padding="10">Score:</Label>
-                                <Label x:Name="scoreLabelPlayer2" FontSize="15"></Label>
+                                <Label x:Name="scoreLabelPlayer2" FontSize="15">0</Label>
                             </StackPanel>
                         </StackPanel>
                     </Border>
