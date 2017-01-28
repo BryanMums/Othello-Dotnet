@@ -15,6 +15,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using Newtonsoft.Json;
 using System.IO;
+using Microsoft.Win32;
 
 namespace Othello
 {
@@ -39,6 +40,7 @@ namespace Othello
 
             System.Diagnostics.Stopwatch stopWatch = new System.Diagnostics.Stopwatch();
             bool hasPlayed = false;
+            
 
             
 
@@ -54,43 +56,6 @@ namespace Othello
              * Joueur actif = noir
              * **********************************/
             bool activePlayer = false;
-
-
-            /*************************************
-             * Boucle principale
-             * **********************************/
-            /*while (gb.nbPossibilities(activePlayer) + gb.nbPossibilities(!activePlayer) > 0)
-            {
-                Console.WriteLine("C'est le tour de : " + activePlayer);
-                gb.drawBoard();
-                /********_Start Timer_************
-                stopWatch.Start();
-                if(!activePlayer)
-                    gb.playMove(5, 3, activePlayer);
-                if (activePlayer)
-                    gb.playMove(5, 4, activePlayer);
-                //while (hasPlayed == false) ;
-                Thread.Sleep(3000);
-                // Va passer ça quand il aura cliqué
-                hasPlayed = false;
-
-                /*********_Arrêt du temps_********
-                stopWatch.Stop();
-                // Get the elapsed time as a TimeSpan value.
-                TimeSpan ts = stopWatch.Elapsed;
-
-                // Format and display the TimeSpan value.
-                string elapsedTime = String.Format("{0:00}:{1:00}:{2:00}.{3:00}",
-                    ts.Hours, ts.Minutes, ts.Seconds,
-                    ts.Milliseconds / 10);
-                Console.WriteLine("RunTime " + elapsedTime);
-
-                Console.WriteLine("Score blanc : " + gb.getScore(true));
-                Console.WriteLine("Score noir : " + gb.getScore(false));
-                activePlayer = !activePlayer;
-
-
-            }*/
         }
 
         private void MouseLeftButtonUpCase(object sender, MouseButtonEventArgs e)
@@ -189,20 +154,94 @@ namespace Othello
         //Ne fonctionne pas encore.
         public void checkVictoryOrSkippingTurn()
         {
+            Console.WriteLine("Moi : "+gb.nbPossibilities(this.activePlayer));
+            Console.WriteLine("Lui : "+gb.nbPossibilities(!this.activePlayer));
             //Tester si le nombre de possibilités totals = 0
             // Si oui -> Fin du match.
             if(gb.nbPossibilities(true) + gb.nbPossibilities(false) == 0)
             {
-                StatusLabel.Content = "Fin du match.";
+                endGame();
             }
             //Tester si le nombre de possibilités du joueur = 0.
             //Si oui, on change de joueur.
-            if(gb.nbPossibilities(this.activePlayer) == 0)
+            else if(gb.nbPossibilities(this.activePlayer) == 0)
             {
-                StatusLabel.Content = "Le joueur n'a pas de possibilités";
-                System.Threading.Thread.Sleep(3000);
+                MessageBoxResult result = MessageBox.Show("Le joueur " + (activePlayer ? "blanc" : "noir") + " ne peut pas jouer !", "Confirmation");
+                Console.WriteLine("NE PEUT PAS JOUER");
                 this.activePlayer = !this.activePlayer;
                 MAJ();
+            }
+        }
+
+        public void endGame()
+        {
+            Console.WriteLine("Fin de la partie");
+            StatusLabel.Content = "Fin de partie !";
+            String text;
+            if (gb.getBlackScore() > gb.getWhiteScore())
+            {
+                text = "Joueur noir a gagné !";
+                Console.WriteLine("Le joueur noir a gagné");
+            }else if(gb.getBlackScore() < gb.getWhiteScore())
+            {
+                text = "Joueur blanc a gagné !";
+                Console.WriteLine("Le joueur blanc a gagné");
+            }else
+            {
+                text = "Egalité !";
+                Console.WriteLine("Egalité !");
+            }
+            MessageBox.Show(text, "Confirmation");
+            string message = "Voulez-vous rejouer ?";
+            string caption = "Fin de partie";
+            MessageBoxButton buttons = MessageBoxButton.YesNo;
+            MessageBoxImage icon = MessageBoxImage.Question;
+            if (MessageBox.Show(message, caption, buttons, icon) == MessageBoxResult.Yes)
+            {
+                Console.WriteLine("Nouvelle partie !");
+                startNewGame();
+            }
+            else
+            {
+                Application.Current.Shutdown();
+            }
+        }
+
+        public void startNewGame()
+        {
+            // Remettre à 0 le plateau
+            // Remettre à 0 les temps et scores
+            // Remettre le joueur actif le joueur NOIR = false
+            this.gb = new Gameboard();
+            activePlayer = false;
+            MAJ();
+        }
+
+        // Permet de charger une sauvegarde d'une partie.
+        public void loadGame()
+        {
+            OpenFileDialog openFileDialog = new OpenFileDialog();
+            if (openFileDialog.ShowDialog() == true)
+            {
+                String state = File.ReadAllText(openFileDialog.FileName);
+                StateGame st = JsonConvert.DeserializeObject<StateGame>(state);
+                gb.setBoard(st.getCaseBoard());
+                MAJ();
+                Console.WriteLine(state);
+
+            }
+                
+        }
+
+        // Permet de sauvegarder l'état d'une partie
+        public void saveGame()
+        {
+            SaveFileDialog saveFileDialog = new SaveFileDialog();
+            if (saveFileDialog.ShowDialog() == true)
+            {
+                // Créer l'état du jeu
+                StateGame sg = new StateGame(gb.getBoard(), 0, 1, true);
+                File.WriteAllText(saveFileDialog.FileName, sg.getJson());
             }
         }
 

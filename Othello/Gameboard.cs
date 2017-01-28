@@ -178,6 +178,22 @@ namespace Othello
                         
                 }
             }
+            // Mis à jour les scores.
+            whiteScore = 0;
+            blackScore = 0;
+            for(int i = 0; i < board.GetLength(0); i++)
+            {
+                for(int j = 0; j < board.GetLength(1); j++)
+                {
+                    if(board[i,j].getState() == 0)
+                    {
+                        whiteScore++;
+                    }else if(board[i,j].getState() == 1)
+                    {
+                        blackScore++;
+                    }
+                }
+            }
             return true;
         }
 
@@ -199,6 +215,11 @@ namespace Othello
         public Case[,] getBoard()
         {
             return this.board;
+        }
+
+        public void setBoard(Case[,] board)
+        {
+            this.board = board;
         }
 
         
