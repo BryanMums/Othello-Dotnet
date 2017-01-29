@@ -25,19 +25,16 @@ namespace Othello
                     board[i, j] = new Othello.Case((char)(97 + i), j);
                 }
             }
+            // Initialisation des cases de départ
             board[3, 3].setState(1);
             board[4, 4].setState(1);
             board[3, 4].setState(0);
             board[4, 3].setState(0);
+            // Mise à jour des scores
             majScores();
 
 
         }
-
-        /*public static void UpdatePlayerTime(object source, ElapsedEventArgs e)
-        {
-            Console.Write("\r{0}", DateTime.Now);
-        }*/
 
         public bool isPlayable(int column, int line, bool isWhite)
         {
@@ -88,10 +85,6 @@ namespace Othello
 
         public bool playMove(int column, int line, bool isWhite)
         {
-
-
-
-            Console.WriteLine("Point joué : (" + column + ", " + line + ")");
             // Est-ce que le coup peut être joué ? 
             if (!isPlayable(column, line, isWhite))
                 return false;
@@ -142,7 +135,6 @@ namespace Othello
                                 if (line - l != 0 && column - c != 0) // Si on a une diagonale (Changement dans les lignes et colonnes)
                                 {
                                     //diagonale
-                                    Console.WriteLine("Diagonale");
                                     int startIndex = (line < l ? line : l);
                                     int endIndex = (line < l ? l : line);
                                     int indexC = 0;
@@ -166,7 +158,6 @@ namespace Othello
                                 else if (line - l != 0 && column - c == 0) // Si on a une colonne, il y a qu'un changement dans les lignes.
                                 {
                                     //colonne
-                                    Console.WriteLine("Colonne");
                                     int startIndex = (line < l ? line : l);
                                     int endIndex = (line < l ? l : line);
                                     for (int index = startIndex; index <= endIndex; index += 1)
@@ -178,7 +169,6 @@ namespace Othello
                                 else if (column - c != 0 && line - l == 0) // Si on a une ligne, il y a qu'un changement dans les colonnes.
                                 {
                                     //ligne
-                                    Console.WriteLine("Ligne");
                                     int startIndex = (column < c ? column : c);
                                     int endIndex = (column < c ? c : column);
                                     for (int index = startIndex; index <= endIndex; index += 1)
@@ -219,6 +209,7 @@ namespace Othello
         }
         public Tuple<char, int> getNextMove(int[,] game, int level, bool whiteTurn)
         {
+            // A implémenter plus tard avec IA.
             return new Tuple<char, int>('a', 1);
         }
 
@@ -270,22 +261,6 @@ namespace Othello
         public void setBoard(Case[,] board)
         {
             this.board = board;
-        }
-
-        public void drawBoard()
-        {
-            int rowLength = board.GetLength(0);
-            int colLength = board.GetLength(1);
-
-            for (int i = 0; i < rowLength; i++)
-            {
-                for (int j = 0; j < colLength; j++)
-                {
-                    Console.Write(string.Format("{0} ", board[i, j].getState()));
-                }
-                Console.Write(Environment.NewLine + Environment.NewLine);
-            }
-            Console.ReadLine();
         }
 
         public int nbPossibilities(bool player)

@@ -18,6 +18,7 @@ using System.IO;
 using Microsoft.Win32;
 using System.Timers;
 using System.Windows.Threading;
+using System.Media;
 
 namespace Othello
 {
@@ -34,6 +35,9 @@ namespace Othello
         public MainWindow()
         {
             InitializeComponent();
+            SoundPlayer player = new SoundPlayer("../../sounds/music.wav");
+            player.Load();
+            player.PlayLooping();
             this.gb = new Gameboard();
             MAJ();
 
@@ -49,13 +53,11 @@ namespace Othello
             if (!this.gb.activePlayer)
             {
                 this.gb.blackTime += 1;
-                timeLabelPlayer1.Content = this.gb.blackTime;
             }else
             {
                 this.gb.whiteTime += 1;
-                timeLabelPlayer2.Content = this.gb.whiteTime;
             }
-
+            MAJDisplayTime();
         }
 
         private void MouseLeftButtonUpCase(object sender, MouseButtonEventArgs e)
@@ -64,7 +66,6 @@ namespace Othello
             if(this.gb.playMove(control.Y, control.X, gb.activePlayer))
             {
                 control.pawnImage.Source = new BitmapImage(new Uri(@"img/black.png", UriKind.Relative));
-                Console.WriteLine("MAJ");
                 gb.activePlayer = !gb.activePlayer;
                 MAJ();
                 checkVictoryOrSkippingTurn();
@@ -174,8 +175,6 @@ namespace Othello
         //Ne fonctionne pas encore.
         public void checkVictoryOrSkippingTurn()
         {
-            Console.WriteLine("Moi : "+gb.nbPossibilities(gb.activePlayer));
-            Console.WriteLine("Lui : "+gb.nbPossibilities(!gb.activePlayer));
             //Tester si le nombre de possibilités totals = 0
             // Si oui -> Fin du match.
             if(gb.nbPossibilities(true) + gb.nbPossibilities(false) == 0)
@@ -187,7 +186,6 @@ namespace Othello
             else if(gb.nbPossibilities(gb.activePlayer) == 0)
             {
                 MessageBoxResult result = MessageBox.Show("Le joueur " + (gb.activePlayer ? "blanc" : "noir") + " ne peut pas jouer !", "Confirmation");
-                Console.WriteLine("NE PEUT PAS JOUER");
                 gb.activePlayer = !gb.activePlayer;
                 MAJ();
             }
@@ -195,21 +193,25 @@ namespace Othello
 
         public void endGame()
         {
-            Console.WriteLine("Fin de la partie");
             StatusLabel.Content = "Fin de partie !";
             String text;
             if (gb.getBlackScore() > gb.getWhiteScore())
             {
                 text = "Joueur noir a gagné !";
-                Console.WriteLine("Le joueur noir a gagné");
             }else if(gb.getBlackScore() < gb.getWhiteScore())
             {
                 text = "Joueur blanc a gagné !";
-                Console.WriteLine("Le joueur blanc a gagné");
             }else
             {
                 text = "Egalité !";
-                Console.WriteLine("Egalité !");
+                // On va tester celui qui a utilisé le moins de temps
+                if (this.gb.blackTime < this.gb.whiteTime)
+                {
+                    text += " Le joueur noir gagne car il a été plus rapide !";
+                }else if(this.gb.blackTime > this.gb.whiteTime)
+                {
+                    text += " Le joueur blanc gagne car il a été plus rapide !";
+                }
             }
             MessageBox.Show(text, "Confirmation");
             string message = "Voulez-vous rejouer ?";
@@ -218,7 +220,6 @@ namespace Othello
             MessageBoxImage icon = MessageBoxImage.Question;
             if (MessageBox.Show(message, caption, buttons, icon) == MessageBoxResult.Yes)
             {
-                Console.WriteLine("Nouvelle partie !");
                 startNewGame();
             }
             else
@@ -227,23 +228,34 @@ namespace Othello
             }
         }
 
+        public void MAJDisplayTime()
+        {
+            timeLabelPlayer1.Content = string.Format("{0:00} : {1:00}", this.gb.blackTime / 60, this.gb.blackTime % 60);
+            timeLabelPlayer2.Content = string.Format("{0:00} : {1:00}", this.gb.whiteTime / 60, this.gb.whiteTime % 60);
+        }
+
         public void startNewGame()
         {
-            // Remettre à 0 le plateau
-            // Remettre à 0 les temps et scores
-            // Remettre le joueur actif le joueur NOIR = false
+
+            // On crée une nouvelle partie donc board remis à l'état initial
             this.gb = new Gameboard();
-            gb.activePlayer = false;
+            // Mettre à jour l'affichage du temps
+            MAJDisplayTime();
+            // Mettre à jour le reste de l'affichage
             MAJ();
         }
 
         private void btnSave_Click(object sender, RoutedEventArgs e)
         {
             SaveFileDialog saveFileDialog = new SaveFileDialog();
+            saveFileDialog.FileName = "sauvegardOthello.json";
+            saveFileDialog.DefaultExt = "json";
+            saveFileDialog.Filter = "json files (*.json)|*.json";
             if (saveFileDialog.ShowDialog() == true)
             {
                 // Créer l'état du jeu
-                StateGame sg = new StateGame(gb.getBoard(), 0, 1, true);
+                StateGame sg = new StateGame(gb.getBoard(), this.gb.blackTime, this.gb.whiteTime, this.gb.activePlayer);
+                // Sauvegarder dans le fichier
                 File.WriteAllText(saveFileDialog.FileName, sg.getJson());
             }
         }
@@ -251,18 +263,25 @@ namespace Othello
         private void btnload_Click(object sender, RoutedEventArgs e)
         {
             OpenFileDialog openFileDialog = new OpenFileDialog();
+            openFileDialog.Filter = "json files (*.json)|*.json";
             if (openFileDialog.ShowDialog() == true)
             {
                 String state = File.ReadAllText(openFileDialog.FileName);
                 StateGame st = JsonConvert.DeserializeObject<StateGame>(state);
                 // Mise à jour du board.
                 gb.setBoard(st.getCaseBoard());
-                // Mise à jour du joueur
+                // Mise à jour du joueur actif
                 this.gb.activePlayer = st.ActivePlayer;
+                // Mise à jour des temps
+                this.gb.blackTime = st.TimeBlack;
+                this.gb.whiteTime = st.TimeWhite;
+                // Mise à jour des scores
                 gb.majScores();
+                // Mise à jour de l'affichage
                 MAJ();
-                Console.WriteLine(state);
-
+                // Mise à jour de l'affichage du temps
+                MAJDisplayTime();
+            
             }
         }
 
