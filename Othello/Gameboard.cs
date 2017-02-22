@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Timers;
 
 namespace Othello
@@ -9,12 +10,16 @@ namespace Othello
         private int size;
         private int whiteScore, blackScore = 0;
         public int whiteTime, blackTime;
+        
+        private Boolean noAvailableMove { get; set; }
 
         public bool activePlayer = false;
 
 
         public Gameboard(int size = 8)
         {
+
+
             this.size = size;
             board = new Case[this.size, this.size];
             // On va remplir notre board
@@ -22,7 +27,7 @@ namespace Othello
             {
                 for (int j = 0; j < this.size; j++)
                 {
-                    board[i, j] = new Othello.Case((char)(97 + i), j);
+                    board[i, j] = new Othello.Case(i, j);
                 }
             }
             // Initialisation des cases de départ
@@ -33,10 +38,11 @@ namespace Othello
             // Mise à jour des scores
             majScores();
 
+      
 
         }
 
-        public bool isPlayable(int column, int line, bool isWhite)
+        public bool IsPlayable(int column, int line, bool isWhite)
         {
             // On vérifie déjà si la case est vide ou non
             if (board[line, column].getState() != -1)
@@ -83,10 +89,10 @@ namespace Othello
             return true;
         }
 
-        public bool playMove(int column, int line, bool isWhite)
+        public bool PlayMove(int column, int line, bool isWhite)
         {
             // Est-ce que le coup peut être joué ? 
-            if (!isPlayable(column, line, isWhite))
+            if (!IsPlayable(column, line, isWhite))
                 return false;
 
             // On va tester pour toutes les directions
@@ -207,13 +213,99 @@ namespace Othello
                 }
             }
         }
-        public Tuple<char, int> getNextMove(int[,] game, int level, bool whiteTurn)
+
+
+        // Liste des coups disponibles
+        private List<Case> getAvailableMoves(Boolean player)
         {
-            // A implémenter plus tard avec IA.
-            return new Tuple<char, int>('a', 1);
+
+            List<Case> availableMoves = new List<Case>();
+
+            foreach(Case c in this.board){
+                if (this.IsPlayable(c.column, c.row, player)){
+                    availableMoves.Add(c);
+                }
+                
+            }
+
+            return availableMoves;
         }
 
-        public int getWhiteScore()
+        public Tuple<int, int> GetNextMove(int[,] game, int level, bool whiteTurn)
+        {
+
+           
+
+            return new Tuple<int, int>('a', 1);
+        }
+
+
+        // Algo alphabeta REMETTRE RENDRE TUPLE
+        private int[] alphabeta(Gameboard board, Node root, int depth, int minormax, double parentValue)
+        {
+
+            // Si minormax = 1 -> Maximisation et si minormax = 0 -> Minimisation
+
+            // Le joueur à ce niveau
+            Boolean l_player = minormax == 1 ? this.activePlayer : !this.activePlayer;
+
+            // Les coups jouables
+            List<Case> possibleMoves = this.getAvailableMoves(l_player);
+
+            // Ealuation
+            int score = eval(root, possibleMoves.Count, l_player, board);
+
+            // Attribue son évalutation au  noeud racine
+            root.evaluation = score;
+
+            // En cas de situation de fin
+            if(depth==0 || possibleMoves.Count == 0)
+            {
+                return new int[] {root.evaluation, 0, 0}; 
+            }
+
+
+            this.noAvailableMove = false;
+
+            // Valeurs par défaut pour la première itération (valeurs idéales)
+            int bestValue = (int)(minormax * Double.NegativeInfinity);
+            int[] bestMove;
+
+
+            foreach(Case c in possibleMoves)
+            {
+                // TODO: CONTINUER ICI L'IMPLEMENTATION
+            }
+
+
+            return 1;
+        }
+
+        // Eval
+        private int eval(Node node, int positions, Boolean playerId, Gameboard board)
+        {
+
+
+            return 1;
+        }
+
+        public int[,] GetBoard()
+        {
+            int[,] gboard = new int[8, 8];
+            foreach(Case c in this.board)
+            {
+                gboard[c.column, c.row] = c.getState();
+            }
+
+            return gboard;
+        }
+
+        public string GetName()
+        {
+            return "Othello Team 13";
+        }
+
+        public int GetWhiteScore()
         {
             return whiteScore;
         }
@@ -228,7 +320,7 @@ namespace Othello
             this.activePlayer = b;
         }
 
-        public int getBlackScore()
+        public int GetBlackScore()
         {
             return blackScore;
         }
@@ -263,6 +355,8 @@ namespace Othello
             this.board = board;
         }
 
+
+
         public int nbPossibilities(bool player)
         {
             int nb = 0;
@@ -270,7 +364,7 @@ namespace Othello
             {
                 for (int j = 0; j < 8; j++)
                 {
-                    if (isPlayable(i, j, player))
+                    if (IsPlayable(i, j, player))
                         nb++;
                 }
             }

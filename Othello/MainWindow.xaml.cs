@@ -63,7 +63,7 @@ namespace Othello
         private void MouseLeftButtonUpCase(object sender, MouseButtonEventArgs e)
         {
             CaseUserControl control = (CaseUserControl) sender;
-            if(this.gb.playMove(control.Y, control.X, gb.activePlayer))
+            if(this.gb.PlayMove(control.Y, control.X, gb.activePlayer))
             {
                 control.pawnImage.Source = new BitmapImage(new Uri(@"img/black.png", UriKind.Relative));
                 gb.activePlayer = !gb.activePlayer;
@@ -75,7 +75,7 @@ namespace Othello
         private void MouseEnterCase(object sender, MouseEventArgs e)
         {
             CaseUserControl control = (CaseUserControl)sender;
-            if(this.gb.isPlayable(control.Y, control.X, gb.activePlayer))
+            if(this.gb.IsPlayable(control.Y, control.X, gb.activePlayer))
             {
                 if (gb.activePlayer)
                     control.pawnImage.Source = new BitmapImage(new Uri(@"img/white.png", UriKind.Relative));
@@ -89,7 +89,7 @@ namespace Othello
             CaseUserControl control = (CaseUserControl)sender;
             if(control.Empty == true)
             {
-                if (this.gb.isPlayable(control.Y, control.X, gb.activePlayer))
+                if (this.gb.IsPlayable(control.Y, control.X, gb.activePlayer))
                 {
                     if (gb.activePlayer)
                         control.pawnImage.Source = new BitmapImage(new Uri(@"img/white_hover.png", UriKind.Relative));
@@ -105,10 +105,10 @@ namespace Othello
         public void MAJ()
         {
             Brush borderColor = Brushes.Gray;
-            if(this.gb.getBlackScore() > this.gb.getWhiteScore())
+            if(this.gb.GetBlackScore() > this.gb.GetWhiteScore())
             {
                 borderColor = Brushes.Black;
-            }else if(this.gb.getBlackScore() < this.gb.getWhiteScore())
+            }else if(this.gb.GetBlackScore() < this.gb.GetWhiteScore())
             {
                 borderColor = Brushes.White;
             }
@@ -140,7 +140,7 @@ namespace Othello
                         control.pawnImage.Source = new BitmapImage(new Uri(@"img/black.png", UriKind.Relative));
                         control.Empty = false;
                     }
-                    if(this.gb.isPlayable(j, i, gb.activePlayer))
+                    if(this.gb.IsPlayable(j, i, gb.activePlayer))
                     {
                         if (gb.activePlayer)
                             control.pawnImage.Source = new BitmapImage(new Uri(@"img/white_hover.png", UriKind.Relative));
@@ -154,8 +154,8 @@ namespace Othello
 
 
             // Mise à jour des scores
-            scoreLabelPlayer1.Content = this.gb.getBlackScore();
-            scoreLabelPlayer2.Content = this.gb.getWhiteScore();
+            scoreLabelPlayer1.Content = this.gb.GetBlackScore();
+            scoreLabelPlayer2.Content = this.gb.GetWhiteScore();
 
 
 
@@ -195,10 +195,10 @@ namespace Othello
         {
             StatusLabel.Content = "Fin de partie !";
             String text;
-            if (gb.getBlackScore() > gb.getWhiteScore())
+            if (gb.GetBlackScore() > gb.GetWhiteScore())
             {
                 text = "Joueur noir a gagné !";
-            }else if(gb.getBlackScore() < gb.getWhiteScore())
+            }else if(gb.GetBlackScore() < gb.GetWhiteScore())
             {
                 text = "Joueur blanc a gagné !";
             }else

@@ -9,10 +9,10 @@ namespace Othello
    
     public class Case
     {
-        private char column;
-        private int row;
+        public int column { get; set; }
+        public int row { get; set; }
         private int state = -1; //-1->vide, 0->blanc, 1->noir
-        public Case(char column, int row)
+        public Case(int column, int row)
         {
             this.column = column;
             this.row = row;
