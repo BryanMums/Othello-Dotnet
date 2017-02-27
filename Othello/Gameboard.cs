@@ -1,10 +1,11 @@
 ﻿using System;
+
 using System.Collections.Generic;
 using System.Timers;
 
 namespace Othello
 {
-    public class Gameboard : IPlayable
+    public class Gameboard : IPlayable, ICloneable
     {
         private Case[,] board;
         private int size;
@@ -37,10 +38,20 @@ namespace Othello
             board[4, 3].setState(0);
             // Mise à jour des scores
             majScores();
-
-      
-
         }
+
+        public Gameboard(Gameboard b)
+        {
+            this.size = b.size;
+            board = b.board;
+            majScores();
+        }
+
+
+        public Object Clone() {
+            return new Gameboard(this);
+        }
+        
 
         public bool IsPlayable(int column, int line, bool isWhite)
         {
@@ -231,12 +242,23 @@ namespace Othello
             return availableMoves;
         }
 
-        public Tuple<int, int> GetNextMove(int[,] game, int level, bool whiteTurn)
+        public Tuple<int, int> GetNextMove(int[,] game, int depth, bool whiteTurn)
         {
+            Gameboard l_gameboard = new Gameboard(game.GetLength(0));
 
-           
-
-            return new Tuple<int, int>('a', 1);
+            for (int i = 0; i < game.GetLength(0); i++) {
+                for (int j = 0; j < game.GetLength(1); j++)
+                {
+                    l_gameboard.board[i, j].setState(game[i, j]);
+                }
+            }
+            int[] result = alphabeta(l_gameboard, new Node(new int[] { 0,0}), depth, 1, Double.NegativeInfinity);
+            
+            if (result[1] == -1)
+            {
+                return null;
+            }
+            return new Tuple<int, int>(result[1], result[2]);
         }
 
 
@@ -269,24 +291,110 @@ namespace Othello
 
             // Valeurs par défaut pour la première itération (valeurs idéales)
             int bestValue = (int)(minormax * Double.NegativeInfinity);
-            int[] bestMove;
+            int[] bestMove = { -1,-1};
 
 
             foreach(Case c in possibleMoves)
             {
-                // TODO: CONTINUER ICI L'IMPLEMENTATION
+                // Clone gameboard to apply each op
+                Gameboard l_gameboard = (Gameboard)board.Clone();
+
+                Node newElem = new Node(new int[] { c.column, c.row });
+
+                root.addChild(newElem);
+
+                l_gameboard.PlayMove(c.column, c.row, l_player);
+
+                int[] val = alphabeta(l_gameboard, newElem, depth - 1, -minormax, bestValue);
+
+                // Create new node with op, attach it to current node as child and
+                // play the turn
+
+                 // Detect if returning value is better than previous
+                 if (val[0] * minormax > bestValue * minormax)
+                 {
+                     bestValue = val[0];
+                     bestMove = new int[] { c.column, c.row };
+
+                     // Detect if we can stop searching in the rest of the childs of
+                     // current node. Check also if we have no parent
+                     if ((bestValue * minormax > parentValue * minormax) && (parentValue != Double.NegativeInfinity))
+                     {
+                         break;
+                     }
+                 }
+                 
             }
 
 
-            return 1;
+            return new int[]{ bestValue, bestMove[0], bestMove[1]};
+        }
+
+
+        public int getCornerPoints(Boolean playerId)
+        {
+
+            int n = 0;
+
+            int player = (playerId == true) ? 1 : 0;
+
+            if(this.board[0, 0].getState() == player)
+            {
+                n++;
+            }
+            if(this.board[this.size-1, 0].getState() == player)
+            {
+                n++;
+            }
+            if(this.board[0, this.size-1].getState() == player)
+            {
+                n++;
+            }
+            if(this.board[this.size-1, this.size-1].getState() == player)
+            {
+                n++;
+            }
+
+            return n;
+
         }
 
         // Eval
         private int eval(Node node, int positions, Boolean playerId, Gameboard board)
         {
+            int myNbCase = board.getScore(playerId);
+            int hisNbCase = board.getScore(!playerId);
+
+            int l_turn = myNbCase + hisNbCase - 4;
 
 
-            return 1;
+            Matrix evalMatrix = new Matrix();
+
+            int mobility = board.getAvailableMoves(playerId).Count - board.getAvailableMoves(!playerId).Count;
+            int materiel = board.getScore(playerId) - board.getScore(!playerId);
+            int coins = board.getCornerPoints(playerId) - board.getCornerPoints(!playerId);
+
+            // Adapt matrix according game state
+            /*if (l_turn <= gameOpeningstate)
+            {
+                // Game opening state: moves have a lot of importance and position
+                return (int)2 * mobility + materiel + evalMatrix.getValue(node.getMove().i, node.getMove().j);
+            }
+            else if (l_turn > this.gameOpeningstate && l_turn < this.gameEndState)
+            {
+                // Game middle state: same as in opening, but we set stronger weigth to borders 
+                evalMatrix.setMiddleGameValues();
+                return (int)0.5 * mobility + materiel + 3 * coins + 6 * evalMatrix.getValue(node.getMove().i, node.getMove().j);
+            }
+            else
+            {
+                // Game end state: here the most important factor is the amount of coins
+                return (int)0.1 * mobility + 3 * materiel + 3 * evalMatrix.getValue(node.getMove().i, node.getMove().j);
+            }*/
+
+
+            return (int)0.1 * mobility + 3 * materiel + 3 * evalMatrix.getValue(node.position[0], node.position[1]);
+
         }
 
         public int[,] GetBoard()

@@ -66,7 +66,9 @@ namespace Othello
             if(this.gb.PlayMove(control.Y, control.X, gb.activePlayer))
             {
                 control.pawnImage.Source = new BitmapImage(new Uri(@"img/black.png", UriKind.Relative));
-                gb.activePlayer = !gb.activePlayer;
+                gb.activePlayer = !gb.activePlayer; 
+                
+                //Console.WriteLine("Le prochain coup the best ever il oe you bryan :" + gb.GetNextMove(this.gb.GetBoard(),  5, gb.activePlayer));
                 MAJ();
                 checkVictoryOrSkippingTurn();
             }
