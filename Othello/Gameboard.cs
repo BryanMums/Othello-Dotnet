@@ -5,7 +5,7 @@ using System.Timers;
 
 namespace Othello
 {
-    public class Gameboard : IPlayable, ICloneable
+    public class GameBoard : IPlayable.IPlayable, ICloneable
     {
         private Case[,] board;
         private int size;
@@ -17,9 +17,9 @@ namespace Othello
         public bool activePlayer = false;
 
 
-        public Gameboard(int size = 8)
+        public GameBoard()
         {
-
+            int size = 8;
 
             this.size = size;
             board = new Case[this.size, this.size];
@@ -32,15 +32,15 @@ namespace Othello
                 }
             }
             // Initialisation des cases de départ
-            board[1, 3].setState(1);
-            board[4, 4].setState(1);
-            board[3, 4].setState(0);
-            board[4, 3].setState(0);
+            board[3, 3].setState(0);
+            board[4, 4].setState(0);
+            board[3, 4].setState(1);
+            board[4, 3].setState(1);
             // Mise à jour des scores
             majScores();
         }
 
-        public Gameboard(Gameboard b)
+        public GameBoard(GameBoard b)
         {
             this.size = b.size;
             board = b.board;
@@ -49,7 +49,7 @@ namespace Othello
 
 
         public Object Clone() {
-            return new Gameboard(this);
+            return new GameBoard(this);
         }
         
 
@@ -244,7 +244,7 @@ namespace Othello
 
         public Tuple<int, int> GetNextMove(int[,] game, int depth, bool whiteTurn)
         {
-            Gameboard l_gameboard = new Gameboard(game.GetLength(0));
+            GameBoard l_gameboard = new GameBoard();
 
             for (int i = 0; i < game.GetLength(0); i++) {
                 for (int j = 0; j < game.GetLength(1); j++)
@@ -256,16 +256,16 @@ namespace Othello
             
             if (result[1] == -1)
             {
-                return null;
+                return new Tuple<int, int>(-1, -1);
             }
             return new Tuple<int, int>(result[1], result[2]);
         }
 
 
         // Algo alphabeta REMETTRE RENDRE TUPLE
-        private int[] alphabeta(Gameboard board, Node root, int depth, int minormax, double parentValue)
+        private int[] alphabeta(GameBoard board, Node root, int depth, int minormax, double parentValue)
         {
-            Console.WriteLine("Depth : " + depth);
+           // Console.WriteLine("Depth : " + depth);
             // Si minormax = 1 -> Maximisation et si minormax = 0 -> Minimisation
 
             // Le joueur à ce niveau
@@ -283,7 +283,7 @@ namespace Othello
             // En cas de situation de fin
             if(depth==0 || possibleMoves.Count == 0)
             {
-                return new int[] {root.evaluation, 0, 0}; 
+                return new int[] {root.evaluation, -1, -1}; 
             }
 
 
@@ -297,7 +297,7 @@ namespace Othello
             foreach(Case c in possibleMoves)
             {
                 // Clone gameboard to apply each op
-                Gameboard l_gameboard = (Gameboard)board.Clone();
+                GameBoard l_gameboard = (GameBoard)board.Clone();
 
                 Node newElem = new Node(new int[] { c.column, c.row });
 
@@ -358,7 +358,7 @@ namespace Othello
         }
 
         // Eval
-        private int eval(Node node, int positions, Boolean playerId, Gameboard board)
+        private int eval(Node node, int positions, Boolean playerId, GameBoard board)
         {
             int myNbCase = board.getScore(playerId);
             int hisNbCase = board.getScore(!playerId);
