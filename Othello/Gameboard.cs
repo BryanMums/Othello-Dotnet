@@ -11,6 +11,7 @@ namespace Othello
         private int size;
         private int whiteScore, blackScore = 0;
         public int whiteTime, blackTime;
+        private int gameOpeningstate, gameEndState;
         
         private Boolean noAvailableMove { get; set; }
 
@@ -242,30 +243,38 @@ namespace Othello
             return availableMoves;
         }
 
+        // Permet d'obtenir le meilleur coup selon notre IA
         public Tuple<int, int> GetNextMove(int[,] game, int depth, bool whiteTurn)
         {
+            this.gameOpeningstate = 12; 
+            this.gameEndState = 60 -  depth;
+            this.activePlayer = whiteTurn;
             GameBoard l_gameboard = new GameBoard();
 
+            // On va remplir le board de notre nouveau gameboard par rapport à nos valeurs.
             for (int i = 0; i < game.GetLength(0); i++) {
                 for (int j = 0; j < game.GetLength(1); j++)
                 {
                     l_gameboard.board[j, i].setState(game[j, i]);
                 }
             }
-            int[] result = alphabeta(l_gameboard, new Node(new int[] { 0,0}), depth, 1, Double.NegativeInfinity);
+            int[] result = alphabeta(l_gameboard, new Node(new int[] {0,0}), depth, 1, Double.NegativeInfinity);
             
+            // Si on n'a pas de résultat possible.
             if (result[1] == -1)
             {
+                // On retourne (-1,-1) pour spécifier qu'il n'y pas de coordonnées possibles.
                 return new Tuple<int, int>(-1, -1);
             }
+            // On retourne notre coordonnées 
             return new Tuple<int, int>(result[1], result[2]);
         }
 
 
-        // Algo alphabeta REMETTRE RENDRE TUPLE
+        // Algo alphabeta 
         private int[] alphabeta(GameBoard board, Node root, int depth, int minormax, double parentValue)
         {
-           // Console.WriteLine("Depth : " + depth);
+            
             // Si minormax = 1 -> Maximisation et si minormax = 0 -> Minimisation
 
             // Le joueur à ce niveau
@@ -274,9 +283,8 @@ namespace Othello
             // Les coups jouables
             List<Case> possibleMoves = this.getAvailableMoves(l_player);
 
-            // Ealuation
+            // Evaluation
             int score = eval(root, possibleMoves.Count, l_player, board);
-
             // Attribue son évalutation au  noeud racine
             root.evaluation = score;
 
@@ -289,46 +297,48 @@ namespace Othello
 
             this.noAvailableMove = false;
 
-            // Valeurs par défaut pour la première itération (valeurs idéales)
+            // Valeurs par défaut pour la première itération
             int bestValue = (int)(minormax * Double.NegativeInfinity);
             int[] bestMove = { -1,-1};
 
 
             foreach(Case c in possibleMoves)
             {
-                // Clone gameboard to apply each op
+                // On va faire un clone de notre gameboard
                 GameBoard l_gameboard = (GameBoard)board.Clone();
 
+                // On crée notre nouvelle élément Node selon les coordonnées du coup possible
                 Node newElem = new Node(new int[] { c.column, c.row });
 
+                // On l'ajoute à notre root
                 root.addChild(newElem);
 
+                // On joue le coup.
                 l_gameboard.PlayMove(c.column, c.row, l_player);
 
+                // On calcule l'alphabeta pour la prochaine couche
                 int[] val = alphabeta(l_gameboard, newElem, depth - 1, -minormax, bestValue);
 
-                // Create new node with op, attach it to current node as child and
-                // play the turn
-
-                 // Detect if returning value is better than previous
-                 if (val[0] * minormax > bestValue * minormax)
+                // On regarde si la valeur retournée est meilleure que celle que l'on a déjà.
+                if (val[0] * minormax > bestValue * minormax)
                  {
+                     // On change nos valeurs car on en a des meilleurs
                      bestValue = val[0];
                      bestMove = new int[] { c.column, c.row };
 
-                     // Detect if we can stop searching in the rest of the childs of
-                     // current node. Check also if we have no parent
-                     if ((bestValue * minormax > parentValue * minormax) && (parentValue != Double.NegativeInfinity))
+                    // On regarde si on peut arrêter de chercher dans les fils du noeud courant 
+                     if (bestValue * minormax > parentValue * minormax)
                      {
                          break;
                      }
                  }
                  
             }
+            // On retourne un tableau de int avec le meilleur résultat et les coordonnées.
             return new int[]{ bestValue, bestMove[0], bestMove[1]};
         }
 
-
+        // Permet de récupérer le nombre de coins d'un joueur.
         public int getCornerPoints(Boolean playerId)
         {
 
@@ -357,42 +367,41 @@ namespace Othello
 
         }
 
-        // Eval
+        // Méthode d'évalutation
         private int eval(Node node, int positions, Boolean playerId, GameBoard board)
         {
-            int myNbCase = board.getScore(playerId);
-            int hisNbCase = board.getScore(!playerId);
-
-            int l_turn = myNbCase + hisNbCase - 4;
+            
+            int l_turn = board.getScore(playerId) + board.getScore(!playerId) - 4; // Nombre de tours (Nb de pions totaux - 4, ceux de départ)
 
 
-            Matrix evalMatrix = new Matrix();
+            Matrix evalMatrix = new Matrix(); // On crée notre matrix
 
-            int mobility = board.getAvailableMoves(playerId).Count - board.getAvailableMoves(!playerId).Count;
-            int materiel = board.getScore(playerId) - board.getScore(!playerId);
-            int coins = board.getCornerPoints(playerId) - board.getCornerPoints(!playerId);
+            // Permet d'obtenir la différence de mouvements possibles entre les 2 joueurs
+            int diffAvailableMoves = board.getAvailableMoves(playerId).Count - board.getAvailableMoves(!playerId).Count;
+            // Permet d'obtenir la différence de score entre les 2 joueurs
+            int diffScore = board.getScore(playerId) - board.getScore(!playerId);
+            // Permet d'obtenir la différence de pièces dans les coins entre les 2 joueurs
+            int diffCornerCoins = board.getCornerPoints(playerId) - board.getCornerPoints(!playerId);
 
-            // Adapt matrix according game state
-            /*if (l_turn <= gameOpeningstate)
+            // Si on est au début de la partie
+            if (l_turn <= gameOpeningstate)
             {
-                // Game opening state: moves have a lot of importance and position
-                return (int)2 * mobility + materiel + evalMatrix.getValue(node.getMove().i, node.getMove().j);
+                // Au début de la partie, on va donner plus d'importance aux mouvements possibles pour avoir un plus vaste choix.
+                return (int)2 * diffAvailableMoves + diffScore + evalMatrix.getValue(node.position[0], node.position[1]);
             }
+            // Si on est au milieu de la partie
             else if (l_turn > this.gameOpeningstate && l_turn < this.gameEndState)
             {
-                // Game middle state: same as in opening, but we set stronger weigth to borders 
+                // En milieu de partie, on va donner plus d'importance aux positions sur les bords ou dans les coins.
                 evalMatrix.setMiddleGameValues();
-                return (int)0.5 * mobility + materiel + 3 * coins + 6 * evalMatrix.getValue(node.getMove().i, node.getMove().j);
+                return (int)0.5 * diffAvailableMoves + diffScore + 3 * diffCornerCoins + 6 * evalMatrix.getValue(node.position[0], node.position[1]);
             }
+            // Si on est à la fin de la partie
             else
             {
-                // Game end state: here the most important factor is the amount of coins
-                return (int)0.1 * mobility + 3 * materiel + 3 * evalMatrix.getValue(node.getMove().i, node.getMove().j);
-            }*/
-
-
-            return (int)0.1 * mobility + 3 * materiel + 3 * evalMatrix.getValue(node.position[0], node.position[1]);
-
+                // En fin de partie, on va surtout choisir par rapport aux nombre de pièces.
+                return (int)0.1 * diffAvailableMoves + 3 * diffScore + 3 * evalMatrix.getValue(node.position[0], node.position[1]);
+            }
         }
 
         public int[,] GetBoard()
@@ -408,7 +417,7 @@ namespace Othello
 
         public string GetName()
         {
-            return "Othello Team 13";
+            return "Groell_Ducommun_Muhmenthaler";
         }
 
         public int GetWhiteScore()

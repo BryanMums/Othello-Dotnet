@@ -28,7 +28,7 @@ namespace Othello
     public partial class MainWindow : Window
     {
 
-        Gameboard gb;
+        GameBoard gb;
         private DispatcherTimer updateTimer;
 
 
@@ -38,7 +38,7 @@ namespace Othello
             SoundPlayer player = new SoundPlayer("../../sounds/music.wav");
             player.Load();
             player.PlayLooping();
-            this.gb = new Gameboard();
+            this.gb = new GameBoard();
             MAJ();
 
             updateTimer = new DispatcherTimer(DispatcherPriority.SystemIdle);
@@ -240,7 +240,7 @@ namespace Othello
         {
 
             // On crée une nouvelle partie donc board remis à l'état initial
-            this.gb = new Gameboard();
+            this.gb = new GameBoard();
             // Mettre à jour l'affichage du temps
             MAJDisplayTime();
             // Mettre à jour le reste de l'affichage

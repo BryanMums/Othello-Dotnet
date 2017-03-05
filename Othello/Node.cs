@@ -15,10 +15,6 @@ namespace Othello
 
         private List<Node> children = new List<Node>();
 
-
-        private static int counter = 0;
-
-
         public Node(int[] position)
         {
             this.position = position;
