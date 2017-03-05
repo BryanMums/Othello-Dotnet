@@ -64,7 +64,6 @@
     </Compile>
     <Compile Include="Matrix.cs" />
     <Compile Include="Node.cs" />
-    <Compile Include="OthelloIA13.cs" />
     <Compile Include="StateGame.cs" />
     <Page Include="CaseUserControl.xaml">
       <Generator>MSBuild:Compile</Generator>

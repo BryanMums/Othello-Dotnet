@@ -32,7 +32,7 @@ namespace Othello
                 }
             }
             // Initialisation des cases de départ
-            board[3, 3].setState(1);
+            board[1, 3].setState(1);
             board[4, 4].setState(1);
             board[3, 4].setState(0);
             board[4, 3].setState(0);
@@ -56,7 +56,7 @@ namespace Othello
         public bool IsPlayable(int column, int line, bool isWhite)
         {
             // On vérifie déjà si la case est vide ou non
-            if (board[line, column].getState() != -1)
+            if (board[column, line].getState() != -1)
                 return false;
 
 
@@ -81,9 +81,9 @@ namespace Othello
             if (c > 7 || c < 0 || l > 7 || l < 0)
                 return false;
             //Check first neighbour
-            if (!(board[l, c].getState() == (isWhite ? 1 : 0)))
+            if (!(board[c, l].getState() == (isWhite ? 1 : 0)))
                 return false;
-            while ((board[l, c].getState() == (isWhite ? 1 : 0)))
+            while ((board[c, l].getState() == (isWhite ? 1 : 0)))
             {
                 c += directionY;
                 l += directionX;
@@ -93,7 +93,7 @@ namespace Othello
                     return false;
                 }
             }
-            if (board[l, c].getState() == -1 || nb == 0)
+            if (board[c, l].getState() == -1 || nb == 0)
             {
                 return false;
             }
@@ -121,7 +121,7 @@ namespace Othello
                         if (c < 0 || c > 7 || l < 0 || l > 7)
                             continue;
                         // Tant qu'on a une valeur différente que la notre
-                        while ((board[l, c].getState() == (isWhite ? 1 : 0)))
+                        while ((board[c, l].getState() == (isWhite ? 1 : 0)))
                         {
                             c += j; l += i; //On va aller au prochain voisin dans la direction.
                             nb += 1;
@@ -138,7 +138,7 @@ namespace Othello
                         if (!end)
                         {
                             // On teste si sa valeur est vide ou qu'on n'a pas eu de voisin directement possible.
-                            if (board[l, c].getState() == -1 || nb == 0)
+                            if (board[c, l].getState() == -1 || nb == 0)
                             {
                                 end = true;  // On arrête
                             }
@@ -169,7 +169,7 @@ namespace Othello
                                     }
                                     for (int index = startIndex; index <= endIndex; index += 1, indexC += incrementC)
                                     {
-                                        board[index, indexC].setState((isWhite ? 0 : 1));
+                                        board[indexC, index].setState((isWhite ? 0 : 1));
                                     }
                                 }
                                 else if (line - l != 0 && column - c == 0) // Si on a une colonne, il y a qu'un changement dans les lignes.
@@ -179,7 +179,7 @@ namespace Othello
                                     int endIndex = (line < l ? l : line);
                                     for (int index = startIndex; index <= endIndex; index += 1)
                                     {
-                                        board[index, column].setState((isWhite ? 0 : 1));
+                                        board[column, index].setState((isWhite ? 0 : 1));
                                     }
 
                                 }
@@ -190,7 +190,7 @@ namespace Othello
                                     int endIndex = (column < c ? c : column);
                                     for (int index = startIndex; index <= endIndex; index += 1)
                                     {
-                                        board[line, index].setState((isWhite ? 0 : 1));
+                                        board[index, line].setState((isWhite ? 0 : 1));
                                     }
                                 }
                             }
@@ -249,7 +249,7 @@ namespace Othello
             for (int i = 0; i < game.GetLength(0); i++) {
                 for (int j = 0; j < game.GetLength(1); j++)
                 {
-                    l_gameboard.board[i, j].setState(game[i, j]);
+                    l_gameboard.board[j, i].setState(game[j, i]);
                 }
             }
             int[] result = alphabeta(l_gameboard, new Node(new int[] { 0,0}), depth, 1, Double.NegativeInfinity);
@@ -265,7 +265,7 @@ namespace Othello
         // Algo alphabeta REMETTRE RENDRE TUPLE
         private int[] alphabeta(Gameboard board, Node root, int depth, int minormax, double parentValue)
         {
-
+            Console.WriteLine("Depth : " + depth);
             // Si minormax = 1 -> Maximisation et si minormax = 0 -> Minimisation
 
             // Le joueur à ce niveau
@@ -325,8 +325,6 @@ namespace Othello
                  }
                  
             }
-
-
             return new int[]{ bestValue, bestMove[0], bestMove[1]};
         }
 

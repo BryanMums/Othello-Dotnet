@@ -63,12 +63,12 @@ namespace Othello
         private void MouseLeftButtonUpCase(object sender, MouseButtonEventArgs e)
         {
             CaseUserControl control = (CaseUserControl) sender;
-            if(this.gb.PlayMove(control.Y, control.X, gb.activePlayer))
+            if(this.gb.PlayMove(control.X, control.Y, gb.activePlayer))
             {
                 control.pawnImage.Source = new BitmapImage(new Uri(@"img/black.png", UriKind.Relative));
                 gb.activePlayer = !gb.activePlayer; 
                 
-                //Console.WriteLine("Le prochain coup the best ever il oe you bryan :" + gb.GetNextMove(this.gb.GetBoard(),  5, gb.activePlayer));
+                Console.WriteLine("Le prochain coup the best ever il oe you bryan :" + gb.GetNextMove(this.gb.GetBoard(),  5, gb.activePlayer));
                 MAJ();
                 checkVictoryOrSkippingTurn();
             }
@@ -77,7 +77,7 @@ namespace Othello
         private void MouseEnterCase(object sender, MouseEventArgs e)
         {
             CaseUserControl control = (CaseUserControl)sender;
-            if(this.gb.IsPlayable(control.Y, control.X, gb.activePlayer))
+            if(this.gb.IsPlayable(control.X, control.Y, gb.activePlayer))
             {
                 if (gb.activePlayer)
                     control.pawnImage.Source = new BitmapImage(new Uri(@"img/white.png", UriKind.Relative));
@@ -91,7 +91,7 @@ namespace Othello
             CaseUserControl control = (CaseUserControl)sender;
             if(control.Empty == true)
             {
-                if (this.gb.IsPlayable(control.Y, control.X, gb.activePlayer))
+                if (this.gb.IsPlayable(control.X, control.Y, gb.activePlayer))
                 {
                     if (gb.activePlayer)
                         control.pawnImage.Source = new BitmapImage(new Uri(@"img/white_hover.png", UriKind.Relative));
@@ -120,24 +120,24 @@ namespace Othello
                 for (int j = 0; j < 8; j++)
                 {
 
-                    CaseUserControl control = new CaseUserControl(i, j);
+                    CaseUserControl control = new CaseUserControl(j, i);
 
                     // Enregistrement des événements
                     control.MouseLeftButtonUp += MouseLeftButtonUpCase;
                     control.MouseLeave += MouseLeaveCase;
                     control.MouseEnter += MouseEnterCase;
 
-                    control.pawnBorder.Background = (i % 2 == 0) ? (j % 2 == 0) ? Brushes.ForestGreen : Brushes.DarkGreen : (j % 2 == 0) ? Brushes.DarkGreen : Brushes.ForestGreen;
+                    control.pawnBorder.Background = (j % 2 == 0) ? (i % 2 == 0) ? Brushes.ForestGreen : Brushes.DarkGreen : (i % 2 == 0) ? Brushes.DarkGreen : Brushes.ForestGreen;
                     control.pawnBorder.BorderBrush = borderColor;
 
-                    Grid.SetColumn(control, i);
-                    Grid.SetRow(control, j);
-                    if (this.gb.getBoard()[i, j].getState() == 0)
+                    Grid.SetColumn(control, j);
+                    Grid.SetRow(control, i);
+                    if (this.gb.getBoard()[j, i].getState() == 0)
                     {
                         control.pawnImage.Source = new BitmapImage(new Uri(@"img/white.png", UriKind.Relative));
                         control.Empty = false;
                     }
-                    else if (this.gb.getBoard()[i, j].getState() == 1)
+                    else if (this.gb.getBoard()[j, i].getState() == 1)
                     {
                         control.pawnImage.Source = new BitmapImage(new Uri(@"img/black.png", UriKind.Relative));
                         control.Empty = false;
